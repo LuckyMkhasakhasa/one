@@ -1,14 +1,19 @@
 import { Locator, Page } from '@playwright/test';
+import { BasePage } from '../core/BasePage';
 
-export class InventoryPage {
-  readonly title: Locator;
+export type SortOption = 'az' | 'za' | 'lohi' | 'hilo';
+
+export class InventoryPage extends BasePage {
+  protected readonly path = '/inventory.html';
+  readonly heading: Locator;
   readonly items: Locator;
   readonly cartBadge: Locator;
   readonly cartLink: Locator;
   readonly sortSelect: Locator;
 
-  constructor(private readonly page: Page) {
-    this.title = page.getByTestId('title');
+  constructor(page: Page) {
+    super(page);
+    this.heading = page.getByTestId('title');
     this.items = page.getByTestId('inventory-item');
     this.cartBadge = page.getByTestId('shopping-cart-badge');
     this.cartLink = page.getByTestId('shopping-cart-link');
@@ -23,7 +28,7 @@ export class InventoryPage {
     await this.item(name).getByRole('button', { name: 'Add to cart' }).click();
   }
 
-  async sortBy(option: 'az' | 'za' | 'lohi' | 'hilo') {
+  async sortBy(option: SortOption) {
     await this.sortSelect.selectOption(option);
   }
 

@@ -1,13 +1,14 @@
 import { test as base } from '@playwright/test';
+import { Env } from './config/Env';
 import { PostsClient } from './api/PostsClient';
 import { LoginPage } from './pages/LoginPage';
 import { InventoryPage } from './pages/InventoryPage';
 import { CheckoutPage } from './pages/CheckoutPage';
 
 export const USERS = {
-  standard: process.env.UI_USER ?? 'standard_user',
+  standard: Env.uiUser,
   lockedOut: 'locked_out_user',
-  password: process.env.UI_PASSWORD ?? 'secret_sauce',
+  password: Env.uiPassword,
 };
 
 type Fixtures = {
