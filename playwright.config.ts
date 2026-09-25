@@ -1,8 +1,9 @@
 import { defineConfig, devices } from '@playwright/test';
-import 'dotenv/config';
+import { Env } from './src/config/Env';
 
-export const UI_BASE_URL = process.env.UI_BASE_URL ?? 'https://www.saucedemo.com';
-export const API_BASE_URL = process.env.API_BASE_URL ?? 'https://jsonplaceholder.typicode.com';
+export const UI_BASE_URL = Env.uiBaseUrl;
+export const API_BASE_URL = Env.apiBaseUrl;
+const WORKBENCH_AUTH_FILE = 'playwright/.auth/workbench.json';
 
 export default defineConfig({
   testDir: './tests',
@@ -33,6 +34,23 @@ export default defineConfig({
       name: 'ui-chromium',
       testDir: './tests/ui',
       use: { ...devices['Desktop Chrome'], baseURL: UI_BASE_URL, testIdAttribute: 'data-test' },
+    },
+    {
+      name: 'workbench-setup',
+      testDir: './tests/workbench',
+      testMatch: /auth\.setup\.ts/,
+      use: { ...devices['Desktop Chrome'], baseURL: Env.workbenchBaseUrl },
+    },
+    {
+      name: 'workbench-public',
+      testDir: './tests/workbench/public',
+      use: { ...devices['Desktop Chrome'], baseURL: Env.workbenchBaseUrl },
+    },
+    {
+      name: 'workbench',
+      testDir: './tests/workbench/authenticated',
+      dependencies: ['workbench-setup'],
+      use: { ...devices['Desktop Chrome'], baseURL: Env.workbenchBaseUrl, storageState: WORKBENCH_AUTH_FILE },
     },
   ],
 });

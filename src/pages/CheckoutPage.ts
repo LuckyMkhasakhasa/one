@@ -1,6 +1,8 @@
 import { Locator, Page } from '@playwright/test';
+import { BasePage } from '../core/BasePage';
 
-export class CheckoutPage {
+export class CheckoutPage extends BasePage {
+  protected readonly path = '/checkout-step-one.html';
   readonly checkoutButton: Locator;
   readonly firstName: Locator;
   readonly lastName: Locator;
@@ -10,6 +12,7 @@ export class CheckoutPage {
   readonly completeHeader: Locator;
 
   constructor(page: Page) {
+    super(page);
     this.checkoutButton = page.getByTestId('checkout');
     this.firstName = page.getByTestId('firstName');
     this.lastName = page.getByTestId('lastName');

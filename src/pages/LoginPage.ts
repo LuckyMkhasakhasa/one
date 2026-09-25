@@ -1,20 +1,19 @@
 import { Locator, Page } from '@playwright/test';
+import { BasePage } from '../core/BasePage';
 
-export class LoginPage {
+export class LoginPage extends BasePage {
+  protected readonly path = '/';
   readonly username: Locator;
   readonly password: Locator;
   readonly loginButton: Locator;
   readonly error: Locator;
 
-  constructor(private readonly page: Page) {
+  constructor(page: Page) {
+    super(page);
     this.username = page.getByTestId('username');
     this.password = page.getByTestId('password');
     this.loginButton = page.getByTestId('login-button');
     this.error = page.getByTestId('error');
-  }
-
-  async goto() {
-    await this.page.goto('/');
   }
 
   async login(username: string, password: string) {
