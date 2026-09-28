@@ -3,6 +3,8 @@ import { PostsClient } from './api/PostsClient';
 import { LoginPage } from './pages/LoginPage';
 import { InventoryPage } from './pages/InventoryPage';
 import { CheckoutPage } from './pages/CheckoutPage';
+import { CartPage } from './pages/CartPage';
+import { ProductPage } from './pages/ProductPage';
 
 export const USERS = {
   standard: process.env.UI_USER ?? 'standard_user',
@@ -15,6 +17,8 @@ type Fixtures = {
   loginPage: LoginPage;
   inventoryPage: InventoryPage;
   checkoutPage: CheckoutPage;
+  cartPage: CartPage;
+  productPage: ProductPage;
   /** Inventory page reached after logging in as the standard user. */
   loggedIn: InventoryPage;
 };
@@ -24,6 +28,8 @@ export const test = base.extend<Fixtures>({
   loginPage: async ({ page }, use) => use(new LoginPage(page)),
   inventoryPage: async ({ page }, use) => use(new InventoryPage(page)),
   checkoutPage: async ({ page }, use) => use(new CheckoutPage(page)),
+  cartPage: async ({ page }, use) => use(new CartPage(page)),
+  productPage: async ({ page }, use) => use(new ProductPage(page)),
   loggedIn: async ({ loginPage, inventoryPage }, use) => {
     await loginPage.goto();
     await loginPage.login(USERS.standard, USERS.password);

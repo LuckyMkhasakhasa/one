@@ -1,5 +1,5 @@
 import { test, expect } from '../../src/fixtures';
-import type { Post } from '../../src/api/PostsClient';
+import type { Comment, Post } from '../../src/api/PostsClient';
 
 test.describe('Posts API', () => {
   test('GET /posts returns a list of posts', async ({ posts }) => {
@@ -26,6 +26,30 @@ test.describe('Posts API', () => {
     const body: Post[] = await res.json();
     expect(body.length).toBeGreaterThan(0);
     for (const post of body) expect(post.userId).toBe(1);
+  });
+
+  test('GET /posts returns unique ids', async ({ posts }) => {
+    const body: Post[] = await (await posts.list()).json();
+    const ids = body.map((p) => p.id);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  test('GET /posts?userId returns an empty list for an unknown user', async ({ posts }) => {
+    const res = await posts.list({ userId: 999_999 });
+    expect(res.status()).toBe(200);
+    expect(await res.json()).toEqual([]);
+  });
+
+  test('GET /posts/:id/comments returns comments for that post', async ({ posts }) => {
+    const res = await posts.comments(1);
+    expect(res.status()).toBe(200);
+
+    const body: Comment[] = await res.json();
+    expect(body.length).toBeGreaterThan(0);
+    for (const comment of body) {
+      expect(comment.postId).toBe(1);
+      expect(comment.email).toMatch(/^\S+@\S+$/);
+    }
   });
 
   test('GET /posts/:id returns a single post', async ({ posts }) => {
@@ -60,6 +84,12 @@ test.describe('Posts API', () => {
     const res = await posts.patch(1, { title: 'Patched' });
     expect(res.status()).toBe(200);
     expect(await res.json()).toMatchObject({ id: 1, title: 'Patched' });
+  });
+
+  test('PATCH /posts/:id leaves other fields untouched', async ({ posts }) => {
+    const original: Post = await (await posts.get(1)).json();
+    const res = await posts.patch(1, { title: 'Patched' });
+    expect(await res.json()).toEqual({ ...original, title: 'Patched' });
   });
 
   test('DELETE /posts/:id deletes a post', async ({ posts }) => {

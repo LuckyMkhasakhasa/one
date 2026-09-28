@@ -7,6 +7,14 @@ export interface Post {
   body: string;
 }
 
+export interface Comment {
+  id: number;
+  postId: number;
+  name: string;
+  email: string;
+  body: string;
+}
+
 export type NewPost = Omit<Post, 'id'>;
 
 /** Thin wrapper around the /posts resource. */
@@ -19,6 +27,10 @@ export class PostsClient {
 
   get(id: number): Promise<APIResponse> {
     return this.request.get(`/posts/${id}`);
+  }
+
+  comments(id: number): Promise<APIResponse> {
+    return this.request.get(`/posts/${id}/comments`);
   }
 
   create(post: NewPost): Promise<APIResponse> {
